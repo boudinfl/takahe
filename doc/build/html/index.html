@@ -1,0 +1,409 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>takahe documentation &mdash; takahe 0.31 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.31',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="takahe 0.31 documentation" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">takahe 0.31 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="takahe-documentation">
+<h1>takahe documentation<a class="headerlink" href="#takahe-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<img alt="takahe" class="align-right" src="_images/bird.jpg" style="width: 200px;" />
+<span class="target" id="module-takahe"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Name:</th><td class="field-body"><p class="first">takahe</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Authors:</th><td class="field-body"><p class="first">Florian Boudin (<a class="reference external" href="mailto:florian&#46;boudin&#37;&#52;&#48;univ-nantes&#46;fr">florian<span>&#46;</span>boudin<span>&#64;</span>univ-nantes<span>&#46;</span>fr</a>)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Version:</th><td class="field-body"><p class="first">0.32</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body"><p class="first">Jun. 2012</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Description:</th><td class="field-body"><p class="first">takahe is a multi-sentence compression module. Given a set of redundant 
+sentences, a word-graph is constructed by iteratively adding sentences to 
+it. The best compression is obtained by finding the shortest path in the
+word graph. The original algorithm was published and described in:</p>
+<blockquote>
+<div><p>Katja Filippova, Multi-Sentence Compression: Finding Shortest Paths
+in Word Graphs, <em>Proceedings of the 23rd International Conference on 
+Computational Linguistics (Coling 2010)</em>, pages 322-330, 2010.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">History:</th><td class="field-body"><ul class="first simple">
+<li>0.32 (Jun. 2012), Punctuation marks are now considered within the graph, 
+compressions are then punctuated.</li>
+<li>0.31 (Nov. 2011), modified context function (uses the left and right 
+contexts), improved docstring documentation, bug fixes</li>
+<li>0.3 (Oct. 2011), improved K-shortest paths algorithm including verb/size 
+constraints and ordered lists for performance</li>
+<li>0.2 (Dec. 2010), removed dependencies from nltk (i.e. POS-tagging, 
+tokenization and stopwords removal)</li>
+<li>0.1 (Nov. 2010), first version</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Dependencies:</th><td class="field-body"><ul class="first simple">
+<li><em>networkx</em> for the graph construction (v1.2+)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Usage:</th><td class="field-body"><p class="first">A typical usage of this module is sample:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">takahe</span>
+
+<span class="c"># A list of tokenized and POS-tagged sentences</span>
+<span class="n">sentences</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Hillary/NNP Clinton/NNP wanted/VBD to/stop visit/VB ...&#39;</span><span class="p">]</span>
+
+<span class="c"># Create a word graph from the set of sentences</span>
+<span class="n">msc</span> <span class="o">=</span> <span class="n">takahe</span><span class="o">.</span><span class="n">graph_fusion</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="s">&#39;en&#39;</span><span class="p">,</span> <span class="s">&quot;PUNCT&quot;</span><span class="p">)</span>
+
+<span class="c"># Get the 50 best paths</span>
+<span class="n">candidates</span> <span class="o">=</span> <span class="n">msc</span><span class="o">.</span><span class="n">get_compression</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+
+<span class="c"># Rerank compressions by path length</span>
+<span class="k">for</span> <span class="n">cummulative_score</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">best_paths</span><span class="p">:</span>
+
+    <span class="c"># Compute the normalized score</span>
+    <span class="n">normalized_score</span> <span class="o">=</span> <span class="n">cummulative_score</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="c"># Print normalized score and compression</span>
+    <span class="k">print</span> <span class="nb">round</span><span class="p">(</span><span class="n">normalized_score</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">path</span><span class="p">])</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Misc:</th><td class="field-body"><p class="first last">The Takahe is a flightless bird indigenous to New Zealand. It was thought to
+be extinct after the last four known specimens were taken in 1898. However, 
+after a carefully planned search effort the bird was rediscovered by on 
+November 20, 1948. (Wikipedia, <a class="reference external" href="http://en.wikipedia.org/wiki/takahe">http://en.wikipedia.org/wiki/takahe</a>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="word-graph-class">
+<h2>word_graph class<a class="headerlink" href="#word-graph-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="takahe.word_graph">
+<em class="property">class </em><tt class="descclassname">takahe.</tt><tt class="descname">word_graph</tt><big>(</big><em>sentence_list</em>, <em>nb_words=8</em>, <em>lang='en'</em>, <em>punct_tag='PUNCT'</em><big>)</big><a class="headerlink" href="#takahe.word_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>The word_graph class constructs a word graph from the set of sentences given
+as input. The set of sentences is a list of strings, sentences are tokenized
+and words POS-tagged (e.g. <tt class="docutils literal"><span class="pre">&quot;Saturn/NNP</span> <span class="pre">is/VBZ</span> <span class="pre">the/DT</span> <span class="pre">sixth/JJ</span> <span class="pre">planet/NN</span> 
+<span class="pre">from/IN</span> <span class="pre">the/DT</span> <span class="pre">Sun/NNP</span> <span class="pre">in/IN</span> <span class="pre">the/DT</span> <span class="pre">Solar/NNP</span> <span class="pre">System/NNP&quot;</span></tt>). Three optional
+parameters can be specified. The first parameter is the minimal number of 
+words for the best compression (default value is 8). The second parameter is
+the language and is used for selecting the correct stopwords list (localized
+in /resources/ directory). The third parameter is the punctuation mark tag 
+used during graph construction (default is PUNCT).</p>
+<dl class="method">
+<dt id="takahe.word_graph.ambiguous_nodes">
+<tt class="descname">ambiguous_nodes</tt><big>(</big><em>node</em><big>)</big><a class="headerlink" href="#takahe.word_graph.ambiguous_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of ambiguous node in the graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.word_graph.build_graph">
+<tt class="descname">build_graph</tt><big>(</big><big>)</big><a class="headerlink" href="#takahe.word_graph.build_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a directed word graph from the list of input sentences. Each
+sentence is iteratively added to the directed graph according to the 
+following algorithm:</p>
+<ul>
+<li><p class="first">Word mapping/creation is done in three steps.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>non-stopwords for which no candidate exists in the graph or for 
+which an unambiguous mapping is possible or which occur more than
+once in the sentence.</li>
+<li>non-stopwords for which there are either several possible
+candidates in the graph.</li>
+<li>stopwords.</li>
+</ol>
+</div></blockquote>
+</li>
+</ul>
+<p>For the last two groups of words where mapping is ambiguous we check the
+immediate context (the preceding and following words in the sentence and
+the neighboring nodes in the graph) and select the candidate which has 
+larger overlap in the context, or the one with a greater frequency (i.e.
+the one which has more words mapped onto it). Stopwords are mapped only 
+if there is some overlap in non-stopwords neighbors, otherwise a new 
+node is created.</p>
+<ul class="simple">
+<li>Edges are then computed and added between mapped words.</li>
+</ul>
+<p>Each node in the graph is represented as a tuple (&#8216;word/POS&#8217;, id) and 
+possesses an info list containing (sentence_id, position_in_sentence)
+tuples.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.word_graph.compute_statistics">
+<tt class="descname">compute_statistics</tt><big>(</big><big>)</big><a class="headerlink" href="#takahe.word_graph.compute_statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function iterates over the cluster&#8217;s sentences and computes the
+following statistics about each word:</p>
+<ul class="simple">
+<li>term frequency (self.term_freq)</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.word_graph.get_compression">
+<tt class="descname">get_compression</tt><big>(</big><em>nb_candidates=50</em><big>)</big><a class="headerlink" href="#takahe.word_graph.get_compression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches all possible paths from <strong>start</strong> to <strong>end</strong> in the word graph,
+removes paths containing no verb or shorter than <em>n</em> words. Returns an
+ordered list (smaller first) of nb (default value is 50) (cummulative 
+score, path) tuples. The score is not normalized with the sentence 
+length.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.word_graph.get_directed_context">
+<tt class="descname">get_directed_context</tt><big>(</big><em>node</em>, <em>k</em>, <em>dir='all'</em>, <em>non_pos=False</em><big>)</big><a class="headerlink" href="#takahe.word_graph.get_directed_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the directed context of a given node, i.e. a list of word/POS of
+the left or right neighboring nodes in the graph. non_pos is a boolean 
+allowing to remove stopwords from the context (default is false).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.word_graph.get_edge_weight">
+<tt class="descname">get_edge_weight</tt><big>(</big><em>node1</em>, <em>node2</em><big>)</big><a class="headerlink" href="#takahe.word_graph.get_edge_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the weight of an edge <em>e</em> between nodes <em>node1</em> and <em>node2</em>. It 
+is computed as e_ij = (A / B) / C with:</p>
+<ul class="simple">
+<li>A = freq(i) + freq(j),</li>
+<li>B = Sum (s in S) 1 / diff(s, i, j)</li>
+<li>C = freq(i) * freq(j)</li>
+</ul>
+<p>A node is a tuple of (&#8216;word/POS&#8217;, unique_id).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.word_graph.graph">
+<tt class="descname">graph</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.word_graph.graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>The directed graph used for fusion.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.word_graph.k_shortest_paths">
+<tt class="descname">k_shortest_paths</tt><big>(</big><em>start</em>, <em>end</em>, <em>k=10</em><big>)</big><a class="headerlink" href="#takahe.word_graph.k_shortest_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple implementation of a k-shortest paths algorithms. Takes three
+parameters: the starting node, the ending node and the number of 
+shortest paths desired. Returns a list of k tuples (path, weight).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.word_graph.length">
+<tt class="descname">length</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.word_graph.length" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of sentences given for fusion.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.word_graph.load_stopwords">
+<tt class="descname">load_stopwords</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#takahe.word_graph.load_stopwords" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function loads a stopword list from the <em>path</em> file and returns a 
+set of words. Lines begining by &#8216;#&#8217; are ignored.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.word_graph.max_index">
+<tt class="descname">max_index</tt><big>(</big><em>l</em><big>)</big><a class="headerlink" href="#takahe.word_graph.max_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the index of the maximum value of a given list.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.word_graph.nb_words">
+<tt class="descname">nb_words</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.word_graph.nb_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>The minimal number of words in the compression.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.word_graph.pre_process_sentences">
+<tt class="descname">pre_process_sentences</tt><big>(</big><big>)</big><a class="headerlink" href="#takahe.word_graph.pre_process_sentences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pre-process the list of sentences given as input. Split sentences using 
+whitespaces and convert each sentence to a list of (word, POS) tuples.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.word_graph.punct_tag">
+<tt class="descname">punct_tag</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.word_graph.punct_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>The stopword tag used in the graph.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.word_graph.resources">
+<tt class="descname">resources</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.word_graph.resources" title="Permalink to this definition">¶</a></dt>
+<dd><p>The path of the resources folder.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.word_graph.sentence">
+<tt class="descname">sentence</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.word_graph.sentence" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of sentences provided by the user.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.word_graph.sep">
+<tt class="descname">sep</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.word_graph.sep" title="Permalink to this definition">¶</a></dt>
+<dd><p>The separator used between a word and its POS in the graph.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.word_graph.start">
+<tt class="descname">start</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.word_graph.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>The start token in the graph.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.word_graph.stop">
+<tt class="descname">stop</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.word_graph.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>The end token in the graph.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.word_graph.stopword_path">
+<tt class="descname">stopword_path</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.word_graph.stopword_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>The path of the stopword list, e.g. stopwords.[lang].dat.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.word_graph.stopwords">
+<tt class="descname">stopwords</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.word_graph.stopwords" title="Permalink to this definition">¶</a></dt>
+<dd><p>The set of stopwords loaded from stopwords.[lang].dat.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.word_graph.term_freq">
+<tt class="descname">term_freq</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.word_graph.term_freq" title="Permalink to this definition">¶</a></dt>
+<dd><p>The frequency of a given term.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.word_graph.verbs">
+<tt class="descname">verbs</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.word_graph.verbs" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of verb POS tags required in the compression. At least <em>one</em>
+verb must occur in the candidate compressions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.word_graph.write_dot">
+<tt class="descname">write_dot</tt><big>(</big><em>dotfile</em><big>)</big><a class="headerlink" href="#takahe.word_graph.write_dot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outputs the word graph in dot format in the specified file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">takahe documentation</a><ul>
+<li><a class="reference internal" href="#word-graph-class">word_graph class</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">takahe 0.31 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010-2011, Florian Boudin.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
