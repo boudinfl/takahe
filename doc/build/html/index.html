@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,15 +7,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>takahe documentation &mdash; takahe 0.31 documentation</title>
+    <title>takahe documentation &mdash; takahe 0.33 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.31',
+        VERSION:     '0.33',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="takahe 0.31 documentation" href="#" /> 
+    <link rel="top" title="takahe 0.33 documentation" href="#" /> 
   </head>
   <body>
     <div class="related">
@@ -37,7 +36,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="#">takahe 0.31 documentation</a> &raquo;</li> 
+        <li><a href="#">takahe 0.33 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -52,7 +51,6 @@
 <ul class="simple">
 </ul>
 </div>
-<img alt="takahe" class="align-right" src="_images/bird.jpg" style="width: 200px;" />
 <span class="target" id="module-takahe"></span><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -63,10 +61,10 @@
 <tr class="field-even field"><th class="field-name">Authors:</th><td class="field-body"><p class="first">Florian Boudin (<a class="reference external" href="mailto:florian&#46;boudin&#37;&#52;&#48;univ-nantes&#46;fr">florian<span>&#46;</span>boudin<span>&#64;</span>univ-nantes<span>&#46;</span>fr</a>)</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Version:</th><td class="field-body"><p class="first">0.32</p>
+<tr class="field-odd field"><th class="field-name">Version:</th><td class="field-body"><p class="first">0.33</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body"><p class="first">Jun. 2012</p>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body"><p class="first">Feb. 2013</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Description:</th><td class="field-body"><p class="first">takahe is a multi-sentence compression module. Given a set of redundant 
@@ -81,8 +79,9 @@ Computational Linguistics (Coling 2010)</em>, pages 322-330, 2010.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">History:</th><td class="field-body"><ul class="first simple">
+<li>0.33 (Feb. 2013), bug fixes and better code documentation</li>
 <li>0.32 (Jun. 2012), Punctuation marks are now considered within the graph, 
-compressions are then punctuated.</li>
+compressions are then punctuated</li>
 <li>0.31 (Nov. 2011), modified context function (uses the left and right 
 contexts), improved docstring documentation, bug fixes</li>
 <li>0.3 (Oct. 2011), improved K-shortest paths algorithm including verb/size 
@@ -98,26 +97,32 @@ tokenization and stopwords removal)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Usage:</th><td class="field-body"><p class="first">A typical usage of this module is sample:</p>
+<tr class="field-even field"><th class="field-name">Usage:</th><td class="field-body"><p class="first">A typical usage of this module is:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">takahe</span>
 
 <span class="c"># A list of tokenized and POS-tagged sentences</span>
 <span class="n">sentences</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Hillary/NNP Clinton/NNP wanted/VBD to/stop visit/VB ...&#39;</span><span class="p">]</span>
 
-<span class="c"># Create a word graph from the set of sentences</span>
-<span class="n">msc</span> <span class="o">=</span> <span class="n">takahe</span><span class="o">.</span><span class="n">graph_fusion</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="s">&#39;en&#39;</span><span class="p">,</span> <span class="s">&quot;PUNCT&quot;</span><span class="p">)</span>
+<span class="c"># Create a word graph from the set of sentences with parameters :</span>
+<span class="c"># - minimal number of words in the compression : 6</span>
+<span class="c"># - language of the input sentences : en (english)</span>
+<span class="c"># - POS tag for punctuation marks : PUNCT</span>
+<span class="n">compresser</span> <span class="o">=</span> <span class="n">takahe</span><span class="o">.</span><span class="n">word_graph</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="s">&#39;en&#39;</span><span class="p">,</span> <span class="s">&quot;PUNCT&quot;</span><span class="p">)</span>
 
 <span class="c"># Get the 50 best paths</span>
-<span class="n">candidates</span> <span class="o">=</span> <span class="n">msc</span><span class="o">.</span><span class="n">get_compression</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">candidates</span> <span class="o">=</span> <span class="n">compresser</span><span class="o">.</span><span class="n">get_compression</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
 <span class="c"># Rerank compressions by path length</span>
-<span class="k">for</span> <span class="n">cummulative_score</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">best_paths</span><span class="p">:</span>
+<span class="k">for</span> <span class="n">cummulative_score</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
 
-    <span class="c"># Compute the normalized score</span>
+    <span class="c"># Normalize path score by path length</span>
     <span class="n">normalized_score</span> <span class="o">=</span> <span class="n">cummulative_score</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
     <span class="c"># Print normalized score and compression</span>
     <span class="k">print</span> <span class="nb">round</span><span class="p">(</span><span class="n">normalized_score</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">path</span><span class="p">])</span>
+
+<span class="c"># Write the word graph in the dot format</span>
+<span class="n">compresser</span><span class="o">.</span><span class="n">write_dot</span><span class="p">(</span><span class="s">&#39;test.dot&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </td>
@@ -137,17 +142,19 @@ November 20, 1948. (Wikipedia, <a class="reference external" href="http://en.wik
 <em class="property">class </em><tt class="descclassname">takahe.</tt><tt class="descname">word_graph</tt><big>(</big><em>sentence_list</em>, <em>nb_words=8</em>, <em>lang='en'</em>, <em>punct_tag='PUNCT'</em><big>)</big><a class="headerlink" href="#takahe.word_graph" title="Permalink to this definition">¶</a></dt>
 <dd><p>The word_graph class constructs a word graph from the set of sentences given
 as input. The set of sentences is a list of strings, sentences are tokenized
-and words POS-tagged (e.g. <tt class="docutils literal"><span class="pre">&quot;Saturn/NNP</span> <span class="pre">is/VBZ</span> <span class="pre">the/DT</span> <span class="pre">sixth/JJ</span> <span class="pre">planet/NN</span> 
-<span class="pre">from/IN</span> <span class="pre">the/DT</span> <span class="pre">Sun/NNP</span> <span class="pre">in/IN</span> <span class="pre">the/DT</span> <span class="pre">Solar/NNP</span> <span class="pre">System/NNP&quot;</span></tt>). Three optional
-parameters can be specified. The first parameter is the minimal number of 
-words for the best compression (default value is 8). The second parameter is
-the language and is used for selecting the correct stopwords list (localized
-in /resources/ directory). The third parameter is the punctuation mark tag 
+and words are POS-tagged (e.g. <tt class="docutils literal"><span class="pre">&quot;Saturn/NNP</span> <span class="pre">is/VBZ</span> <span class="pre">the/DT</span> <span class="pre">sixth/JJ</span> 
+<span class="pre">planet/NN</span> <span class="pre">from/IN</span> <span class="pre">the/DT</span> <span class="pre">Sun/NNP</span> <span class="pre">in/IN</span> <span class="pre">the/DT</span> <span class="pre">Solar/NNP</span> <span class="pre">System/NNP&quot;</span></tt>). 
+Three optional parameters can be specified. The first parameter is the 
+minimal number of words for the best compression (default value is 8). The 
+second parameter is the language and is used for selecting the correct 
+stopwords list (default is &#8220;en&#8221; for english, stopword lists are localized in 
+/resources/ directory). The third parameter is the punctuation mark tag 
 used during graph construction (default is PUNCT).</p>
 <dl class="method">
 <dt id="takahe.word_graph.ambiguous_nodes">
 <tt class="descname">ambiguous_nodes</tt><big>(</big><em>node</em><big>)</big><a class="headerlink" href="#takahe.word_graph.ambiguous_nodes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of ambiguous node in the graph.</p>
+<dd><p>Takes a node in parameter and returns the number of possible candidate 
+(ambiguous) nodes in the graph.</p>
 </dd></dl>
 
 <dl class="method">
@@ -157,26 +164,29 @@ used during graph construction (default is PUNCT).</p>
 sentence is iteratively added to the directed graph according to the 
 following algorithm:</p>
 <ul>
-<li><p class="first">Word mapping/creation is done in three steps.</p>
+<li><p class="first">Word mapping/creation is done in four steps:</p>
 <blockquote>
 <div><ol class="arabic simple">
 <li>non-stopwords for which no candidate exists in the graph or for 
 which an unambiguous mapping is possible or which occur more than
-once in the sentence.</li>
+once in the sentence</li>
 <li>non-stopwords for which there are either several possible
-candidates in the graph.</li>
-<li>stopwords.</li>
+candidates in the graph</li>
+<li>stopwords</li>
+<li>punctuation marks</li>
 </ol>
 </div></blockquote>
 </li>
 </ul>
-<p>For the last two groups of words where mapping is ambiguous we check the
-immediate context (the preceding and following words in the sentence and
-the neighboring nodes in the graph) and select the candidate which has 
-larger overlap in the context, or the one with a greater frequency (i.e.
-the one which has more words mapped onto it). Stopwords are mapped only 
-if there is some overlap in non-stopwords neighbors, otherwise a new 
-node is created.</p>
+<p>For the last three groups of words where mapping is ambiguous we check 
+the immediate context (the preceding and following words in the sentence 
+and the neighboring nodes in the graph) and select the candidate which 
+has larger overlap in the context, or the one with a greater frequency 
+(i.e. the one which has more words mapped onto it). Stopwords are mapped 
+only if there is some overlap in non-stopwords neighbors, otherwise a 
+new node is created. Punctuation marks are mapped only if the preceding 
+and following words in the sentence and the neighboring nodes are the
+same.</p>
 <ul class="simple">
 <li>Edges are then computed and added between mapped words.</li>
 </ul>
@@ -209,8 +219,17 @@ length.</p>
 <dt id="takahe.word_graph.get_directed_context">
 <tt class="descname">get_directed_context</tt><big>(</big><em>node</em>, <em>k</em>, <em>dir='all'</em>, <em>non_pos=False</em><big>)</big><a class="headerlink" href="#takahe.word_graph.get_directed_context" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the directed context of a given node, i.e. a list of word/POS of
-the left or right neighboring nodes in the graph. non_pos is a boolean 
-allowing to remove stopwords from the context (default is false).</p>
+the left or right neighboring nodes in the graph. The function takes 
+four parameters :</p>
+<ul class="simple">
+<li>node is the word/POS tuple</li>
+<li>k is the node identifier used when multiple nodes refer to the same 
+word/POS (e.g. k=0 for (the/DET, 0), k=1 for (the/DET, 1), etc.)</li>
+<li>dir is the parameter that controls the directed context calculation, 
+it can be set to left, right or all (default)</li>
+<li>non_pos is a boolean allowing to remove stopwords from the context 
+(default is false)</li>
+</ul>
 </dd></dl>
 
 <dl class="method">
@@ -358,6 +377,9 @@ verb must occur in the candidate compressions.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="#">
+              <img class="logo" src="_static/takahe.jpg" alt="Logo"/>
+            </a></p>
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">takahe documentation</a><ul>
@@ -398,11 +420,11 @@ verb must occur in the candidate compressions.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="#">takahe 0.31 documentation</a> &raquo;</li> 
+        <li><a href="#">takahe 0.33 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2010-2011, Florian Boudin.
+        &copy; Copyright 2010-2013, Florian Boudin.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

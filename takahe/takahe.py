@@ -9,10 +9,10 @@
     Florian Boudin (florian.boudin@univ-nantes.fr)
 
 :Version:
-    0.32
+    0.33
 
 :Date:
-    Jun. 2012
+    Feb. 2013
 
 :Description:
     takahe is a multi-sentence compression module. Given a set of redundant 
@@ -25,8 +25,9 @@
         Computational Linguistics (Coling 2010)*, pages 322-330, 2010.
 
 :History:
+    - 0.33 (Feb. 2013), bug fixes and better code documentation
     - 0.32 (Jun. 2012), Punctuation marks are now considered within the graph, 
-      compressions are then punctuated.
+      compressions are then punctuated
     - 0.31 (Nov. 2011), modified context function (uses the left and right 
       contexts), improved docstring documentation, bug fixes
     - 0.3 (Oct. 2011), improved K-shortest paths algorithm including verb/size 
@@ -46,20 +47,26 @@
         # A list of tokenized and POS-tagged sentences
         sentences = ['Hillary/NNP Clinton/NNP wanted/VBD to/stop visit/VB ...']
         
-        # Create a word graph from the set of sentences
-        msc = takahe.graph_fusion(sentences, 6, 'en', "PUNCT")
+        # Create a word graph from the set of sentences with parameters :
+        # - minimal number of words in the compression : 6
+        # - language of the input sentences : en (english)
+        # - POS tag for punctuation marks : PUNCT
+        compresser = takahe.word_graph(sentences, 6, 'en', "PUNCT")
 
         # Get the 50 best paths
-        candidates = msc.get_compression(50)
+        candidates = compresser.get_compression(5)
 
         # Rerank compressions by path length
-        for cummulative_score, path in best_paths:
+        for cummulative_score, path in candidates:
 
-            # Compute the normalized score
+            # Normalize path score by path length
             normalized_score = cummulative_score / len(path)
 
             # Print normalized score and compression
             print round(normalized_score, 3), ' '.join([u[0] for u in path])
+
+        # Write the word graph in the dot format
+        compresser.write_dot('test.dot')
 
 :Misc:
     The Takahe is a flightless bird indigenous to New Zealand. It was thought to
@@ -75,7 +82,7 @@ import re
 import sys
 import bisect
 import networkx as nx
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 #~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
 # [ Class word_graph
@@ -84,12 +91,13 @@ class word_graph:
     """
     The word_graph class constructs a word graph from the set of sentences given
     as input. The set of sentences is a list of strings, sentences are tokenized
-    and words POS-tagged (e.g. ``"Saturn/NNP is/VBZ the/DT sixth/JJ planet/NN 
-    from/IN the/DT Sun/NNP in/IN the/DT Solar/NNP System/NNP"``). Three optional
-    parameters can be specified. The first parameter is the minimal number of 
-    words for the best compression (default value is 8). The second parameter is
-    the language and is used for selecting the correct stopwords list (localized
-    in /resources/ directory). The third parameter is the punctuation mark tag 
+    and words are POS-tagged (e.g. ``"Saturn/NNP is/VBZ the/DT sixth/JJ 
+    planet/NN from/IN the/DT Sun/NNP in/IN the/DT Solar/NNP System/NNP"``). 
+    Three optional parameters can be specified. The first parameter is the 
+    minimal number of words for the best compression (default value is 8). The 
+    second parameter is the language and is used for selecting the correct 
+    stopwords list (default is "en" for english, stopword lists are localized in 
+    /resources/ directory). The third parameter is the punctuation mark tag 
     used during graph construction (default is PUNCT).
     """
 
@@ -195,24 +203,28 @@ class word_graph:
         sentence is iteratively added to the directed graph according to the 
         following algorithm:
 
-        - Word mapping/creation is done in three steps.
+        - Word mapping/creation is done in four steps:
 
             1. non-stopwords for which no candidate exists in the graph or for 
                which an unambiguous mapping is possible or which occur more than
-               once in the sentence.
+               once in the sentence
 
             2. non-stopwords for which there are either several possible
-               candidates in the graph.
+               candidates in the graph
 
-            3. stopwords.
+            3. stopwords
 
-        For the last two groups of words where mapping is ambiguous we check the
-        immediate context (the preceding and following words in the sentence and
-        the neighboring nodes in the graph) and select the candidate which has 
-        larger overlap in the context, or the one with a greater frequency (i.e.
-        the one which has more words mapped onto it). Stopwords are mapped only 
-        if there is some overlap in non-stopwords neighbors, otherwise a new 
-        node is created.
+            4. punctuation marks
+
+        For the last three groups of words where mapping is ambiguous we check 
+        the immediate context (the preceding and following words in the sentence 
+        and the neighboring nodes in the graph) and select the candidate which 
+        has larger overlap in the context, or the one with a greater frequency 
+        (i.e. the one which has more words mapped onto it). Stopwords are mapped 
+        only if there is some overlap in non-stopwords neighbors, otherwise a 
+        new node is created. Punctuation marks are mapped only if the preceding 
+        and following words in the sentence and the neighboring nodes are the
+        same.
 
         - Edges are then computed and added between mapped words.
         
@@ -545,7 +557,10 @@ class word_graph:
  
     #-T-----------------------------------------------------------------------T-
     def ambiguous_nodes(self, node):
-        """ Returns the number of ambiguous node in the graph. """
+        """
+        Takes a node in parameter and returns the number of possible candidate 
+        (ambiguous) nodes in the graph.
+        """
         k = 0
         while(self.graph.has_node((node, k))):
             k += 1
@@ -557,8 +572,16 @@ class word_graph:
     def get_directed_context(self, node, k, dir='all', non_pos=False):
         """
         Returns the directed context of a given node, i.e. a list of word/POS of
-        the left or right neighboring nodes in the graph. non_pos is a boolean 
-        allowing to remove stopwords from the context (default is false).
+        the left or right neighboring nodes in the graph. The function takes 
+        four parameters :
+
+        - node is the word/POS tuple
+        - k is the node identifier used when multiple nodes refer to the same 
+          word/POS (e.g. k=0 for (the/DET, 0), k=1 for (the/DET, 1), etc.)
+        - dir is the parameter that controls the directed context calculation, 
+          it can be set to left, right or all (default)
+        - non_pos is a boolean allowing to remove stopwords from the context 
+          (default is false)
         """
 
         # Define the context containers

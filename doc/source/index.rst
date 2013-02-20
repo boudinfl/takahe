@@ -9,11 +9,6 @@ takahe documentation
 .. toctree::
    :maxdepth: 2
 
-.. image:: img/bird.jpg
-    :width: 200 px
-    :alt: takahe
-    :align: right
-
 .. automodule:: takahe
 
 word_graph class

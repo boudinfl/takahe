@@ -3,6 +3,7 @@
 
 import takahe
 
+
 ################################################################################
 sentences = ["The/DT wife/NN of/IN a/DT former/JJ U.S./NNP president/NN \
 Bill/NNP Clinton/NNP Hillary/NNP Clinton/NNP visited/VBD China/NNP last/JJ \
@@ -14,17 +15,23 @@ the/DT People/NNP Republic/NNP of/IN China/NNP on/IN Monday/NNP ./PUNCT",
 visited/VBD Chinese/JJ officials/NNS ./PUNCT"]
 ################################################################################
 
-# Create a word graph from the set of sentences
-compresser = takahe.word_graph(sentences, 6, 'en', 'PUNCT')
+# Create a word graph from the set of sentences with parameters :
+# - minimal number of words in the compression : 6
+# - language of the input sentences : en (english)
+# - POS tag for punctuation marks : PUNCT
+compresser = takahe.word_graph(sentences, 6, 'en', "PUNCT")
 
 # Get the 50 best paths
-best_paths = compresser.get_compression(5)
+candidates = compresser.get_compression(5)
 
 # Rerank compressions by path length
-for cummulative_score, path in best_paths:
+for cummulative_score, path in candidates:
 
-	# Compute the normalized score
+	# Normalize path score by path length
 	normalized_score = cummulative_score / len(path)
 
 	# Print normalized score and compression
 	print round(normalized_score, 3), ' '.join([u[0] for u in path])
+
+# Write the word graph in the dot format
+compresser.write_dot('test.dot')

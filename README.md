@@ -8,20 +8,23 @@ A typical usage of this module is:
     
 	import takahe
         
-	# A list of tokenized and POS-tagged sentences
-	sentences = ['Hillary/NNP Clinton/NNP wanted/VBD to/stop visit/VB ...']
-        
-	# Create a word graph from the set of sentences
-	msc = takahe.graph_fusion(sentences, 6, 'en', "PUNCT")
+	# Create a word graph from the set of sentences with parameters :
+	# - minimal number of words in the compression : 6
+	# - language of the input sentences : en (english)
+	# - POS tag for punctuation marks : PUNCT
+	compresser = takahe.word_graph(sentences, 6, 'en', "PUNCT")
 
 	# Get the 50 best paths
-	candidates = msc.get_compression(50)
+	candidates = compresser.get_compression(5)
 
 	# Rerank compressions by path length
-	for cummulative_score, path in best_paths:
+	for cummulative_score, path in candidates:
 
-		# Compute the normalized score
+		# Normalize path score by path length
 		normalized_score = cummulative_score / len(path)
 
 		# Print normalized score and compression
 		print round(normalized_score, 3), ' '.join([u[0] for u in path])
+
+	# Write the word graph in the dot format
+	compresser.write_dot('test.dot')
