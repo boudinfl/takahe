@@ -702,7 +702,7 @@ class word_graph:
    
    
     #-T-----------------------------------------------------------------------T-
-    def k_shortest_paths(self, start, end, k = 10):
+    def k_shortest_paths(self, start, end, k=10):
         """
         Simple implementation of a k-shortest paths algorithms. Takes three
         parameters: the starting node, the ending node and the number of 
@@ -789,7 +789,7 @@ class word_graph:
                     # Remove extra space from sentence
                     raw_sentence = raw_sentence.strip()
 
-                    if nb_verbs == 1 and length >= self.nb_words and \
+                    if nb_verbs > 1 and length >= self.nb_words and \
                         paired_parentheses == 0 and \
                         (quotation_mark_number%2) == 0 \
                         and not sentence_container.has_key(raw_sentence):
@@ -888,9 +888,6 @@ class word_graph:
         # Structure for containing the list of sentences in which a term occurs
         terms = {}
 
-        # Graph for computing the importance of each word
-        # self.wordGraph = nx.Graph()
-
         # Loop over the sentences
         for i in range(self.length):
         
@@ -905,8 +902,6 @@ class word_graph:
                     terms[node] = [i]
                 else:
                     terms[node].append(i)
-
-
 
         # Loop over the terms
         for w in terms:
