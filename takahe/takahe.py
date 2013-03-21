@@ -93,18 +93,21 @@ class word_graph:
     as input. The set of sentences is a list of strings, sentences are tokenized
     and words are POS-tagged (e.g. ``"Saturn/NNP is/VBZ the/DT sixth/JJ 
     planet/NN from/IN the/DT Sun/NNP in/IN the/DT Solar/NNP System/NNP"``). 
-    Three optional parameters can be specified. The first parameter is the 
-    minimal number of words for the best compression (default value is 8). The 
-    second parameter is the language and is used for selecting the correct 
-    stopwords list (default is "en" for english, stopword lists are localized in 
-    /resources/ directory). The third parameter is the punctuation mark tag 
-    used during graph construction (default is PUNCT).
+    Four optional parameters can be specified:
+
+    - nb_words is is the minimal number of words for the best compression 
+      (default value is 8).
+    - lang is the language parameter and is used for selecting the correct 
+      stopwords list (default is "en" for english, stopword lists are localized 
+      in /resources/ directory).
+    - punct_tag is the punctuation mark tag used during graph construction 
+      (default is PUNCT).
     """
 
     #-T-----------------------------------------------------------------------T-
     def __init__(self, sentence_list, nb_words=8, lang="en", punct_tag="PUNCT"):
 
-        self.sentence = sentence_list
+        self.sentence = list(sentence_list)
         """ A list of sentences provided by the user. """
 
         self.length = len(sentence_list)
@@ -141,11 +144,15 @@ class word_graph:
         """ The frequency of a given term. """
         
         self.verbs = set(['VB', 'VBD', 'VBP', 'VBZ', 'VH', 'VHD', 'VHP', 'VBZ', 
-        'VV', 'VVD', 'VVP', 'VVZ', 'V'])
+        'VV', 'VVD', 'VVP', 'VVZ'])
         """
         The list of verb POS tags required in the compression. At least *one* 
         verb must occur in the candidate compressions.
         """
+
+        # Replacing default values for French
+        if lang == "fr":
+            self.verbs = set(['V', 'VPP', 'VINF'])
 
         # 1. Pre-process the sentences
         self.pre_process_sentences()
@@ -266,7 +273,8 @@ class word_graph:
                 if k == 0:
 
                     # Add the node in the graph
-                    self.graph.add_node( (node, 0), info=[(i, j)] )
+                    self.graph.add_node( (node, 0), info=[(i, j)],
+                                         label=token.lower() )
 
                     # Mark the word as mapped to k
                     mapping[j] = (node, 0)
@@ -286,7 +294,8 @@ class word_graph:
 
                     # Else Create new node for redundant word
                     else:
-                        self.graph.add_node((node, 1), info=[(i, j)])
+                        self.graph.add_node( (node, 1), info=[(i, j)], 
+                                             label=token.lower() )
                         mapping[j] = (node, 1)
 
             #-------------------------------------------------------------------
@@ -377,7 +386,8 @@ class word_graph:
 
                     # Else create new node for redundant word
                     else:
-                        self.graph.add_node((node, k), info=[(i, j)])
+                        self.graph.add_node( (node, k), info=[(i, j)], 
+                                             label=token.lower() )
                         mapping[j] = (node, k)
             
             #-------------------------------------------------------------------
@@ -402,7 +412,8 @@ class word_graph:
                 if k == 0:
 
                     # Add the node in the graph
-                    self.graph.add_node( (node, 0), info=[(i, j)] )
+                    self.graph.add_node( (node, 0), info=[(i, j)], 
+                                         label=token.lower() )
 
                     # Mark the word as mapped to k
                     mapping[j] = (node, 0)
@@ -459,7 +470,8 @@ class word_graph:
                     # Else create a new node
                     else:
                         # Add the node in the graph
-                        self.graph.add_node( (node, k) , info=[(i, j)])
+                        self.graph.add_node( (node, k) , info=[(i, j)],
+                                             label=token.lower() )
 
                         # Mark the word as mapped to k
                         mapping[j] = (node, k)
@@ -486,7 +498,8 @@ class word_graph:
                 if k == 0:
 
                     # Add the node in the graph
-                    self.graph.add_node( (node, 0), info=[(i, j)] )
+                    self.graph.add_node( (node, 0), info=[(i, j)], 
+                                         label=token.lower() )
 
                     # Mark the word as mapped to k
                     mapping[j] = (node, 0)
@@ -537,7 +550,8 @@ class word_graph:
                     # Else create a new node
                     else:
                         # Add the node in the graph
-                        self.graph.add_node( (node, k) , info=[(i, j)])
+                        self.graph.add_node( (node, k), info=[(i, j)], 
+                                             label=token.lower() )
 
                         # Mark the word as mapped to k
                         mapping[j] = (node, k)
@@ -789,7 +803,8 @@ class word_graph:
                     # Remove extra space from sentence
                     raw_sentence = raw_sentence.strip()
 
-                    if nb_verbs > 1 and length >= self.nb_words and \
+                    if nb_verbs >0 and \
+                        length >= self.nb_words and \
                         paired_parentheses == 0 and \
                         (quotation_mark_number%2) == 0 \
                         and not sentence_container.has_key(raw_sentence):
@@ -910,6 +925,7 @@ class word_graph:
             self.term_freq[w] = len(terms[w])
     #-B-----------------------------------------------------------------------B-
 
+
     #-T-----------------------------------------------------------------------T-
     def load_stopwords(self, path):
         """
@@ -929,6 +945,7 @@ class word_graph:
         return stopwords
     #-B-----------------------------------------------------------------------B-
     
+
     #-T-----------------------------------------------------------------------T-
     def write_dot(self, dotfile):
         """ Outputs the word graph in dot format in the specified file. """
@@ -938,3 +955,188 @@ class word_graph:
 #~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
 # ] Ending word_graph class
 #~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
+
+#~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
+# [ Class keyphrase_reranker
+#~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
+class keyphrase_reranker:
+    """
+    The keyphrase_reranker class reranks a list of compression candidates 
+    according to the keyphrases they contain.
+    """
+
+    #-T-----------------------------------------------------------------------T-
+    def __init__(self, sentence_list, compressions, lang="en"):
+
+        self.sentences = list(sentence_list)
+        """ A list of sentences provided by the user. """
+
+        self.compressions = compressions
+        """ The compression candidates provided by the user. """
+
+        self.graph = nx.Graph()
+        """ The graph used for keyphrase extraction. """
+
+        self.lang = lang
+        """ The language of the input sentences, default is English (en).""" 
+
+        self.syntactic_filter = ['JJ', 'NNP', 'NNS', 'NN']
+        """ The POS tags used for generating keyphrase candidates. """
+
+        self.keyphrase_candidates = {}
+        """ The keyphrase candidates generated from the set of sentences. """
+
+        if self.lang == "fr":
+            self.syntactic_filter = ['NPP', 'NC', 'ADJ']
+
+        # 1. Build the word graph from the sentences
+        self.build_graph()
+
+        # 2. Generate the keyphrase candidates
+        self.generate_candidates()
+
+        for keyphrase in self.keyphrase_candidates:
+            print keyphrase
+
+    #-B-----------------------------------------------------------------------B-
+
+
+    #-T-----------------------------------------------------------------------T-
+    def build_graph(self, window=0):
+        """
+        Build a word graph from the list if sentences given as input. Each node
+        in the graph represents a (word, POS) tuple. An edge is created between
+        two nodes if they co-occur in a given window (default is 0, indicating
+        the whole sentence).
+        """
+
+        # For each sentence 
+        for i in range(len(self.sentences)):
+        
+            # Normalise extra white spaces
+            self.sentences[i] = re.sub(' +', ' ', self.sentences[i])
+            
+            # Tokenize the current sentence in word/POS
+            sentence = self.sentences[i].split(' ')
+
+            # 1. Looping over the words and creating the nodes. Sentences are
+            #    converted to a list of tuples
+            for j in range(len(sentence)):
+
+                # Convert word/POS to (word, POS) tuple
+                sentence[j] = self.wordpos_to_tuple(sentence[j])
+
+                # Add the word only if it belongs to one of the syntactic 
+                # categories
+                if sentence[j][1] in self.syntactic_filter:
+
+                    # Add node to the graph if not exists
+                    if not self.graph.has_node(sentence[j]):
+                        self.graph.add_node(sentence[j])
+
+            # 2. Create the edges between the nodes using co-occurencies
+            for j in range(len(sentence)):
+
+                # Get the first node
+                first_node = sentence[j]
+
+                # Switch to set the window for the whole sentence
+                max_window = window 
+                if window < 1:
+                    max_window = len(sentence)
+
+                # For the other words in the window
+                for k in range(j+1, min(len(sentence), j+max_window)):
+
+                    # Get the second node
+                    second_node = sentence[k]
+
+                    # Check if nodes exists 
+                    if self.graph.has_node(first_node) and \
+                       self.graph.has_node(second_node):
+
+                        # Add edge if not exists
+                        if not self.graph.has_edge(first_node, second_node):
+                            self.graph.add_edge(first_node,second_node,weight=1)
+                        # Else modify weight
+                        else:
+                            self.graph[first_node][second_node]['weight'] += 1
+
+            # Replace sentence by the list of tuples
+            self.sentences[i] = sentence
+    #-B-----------------------------------------------------------------------B-
+
+    #-T-----------------------------------------------------------------------T-
+    def generate_candidates(self):
+        """
+        This function generates the keyphrase candidates. Candidates are n-grams
+        that only contain words from the defined syntactic categories.
+        """
+
+        # For each sentence 
+        for i in range(len(self.sentences)):
+
+            sentence = self.sentences[i]
+
+            # List for iteratively constructing a keyphrase candidate
+            candidate = []
+
+            # For each (word, pos) tuple in the sentence
+            for j in range(len(sentence)):
+
+                # If word is to be included in a candidate
+                if sentence[j][1] in self.syntactic_filter:
+
+                    # Adds word to candidate
+                    candidate.append(self.tuple_to_wordpos(sentence[j]))
+
+                # If a candidate keyphrase is in the buffer
+                elif len(candidate) > 0:
+
+                    keyphrase = ' '.join(candidate)
+                    self.keyphrase_candidates[keyphrase] = candidate
+
+                    # Flush the buffer
+                    candidate = []
+               
+            # Handle the last possible candidate
+            if len(candidate) > 0:
+                keyphrase = ' '.join(candidate)
+                self.keyphrase_candidates[keyphrase] = candidate
+    #-B-----------------------------------------------------------------------B-
+
+    #-T-----------------------------------------------------------------------T-
+    def wordpos_to_tuple(self, word, delim='/'):
+        """
+        This function converts a word/POS to a (word, POS) tuple. The character
+        used for separating word and POS can be specified (default is /).
+        """
+
+        # Splitting word, POS using regex
+        m = re.match("^(.+)"+delim+"(.+)$", word)
+
+        # Extract the word information
+        token, POS = m.group(1), m.group(2)
+
+        # Return the tuple 
+        return (token.lower(), POS)
+    #-B-----------------------------------------------------------------------B-
+
+
+    #-T-----------------------------------------------------------------------T-
+    def tuple_to_wordpos(self, wordpos_tuple, delim='/'):
+        """
+        This function converts a (word, POS) tuple to word/POS. The character 
+        used for separating word and POS can be specified (default is /).
+        """
+
+        # Return the word +delim+ POS
+        return wordpos_tuple[0]+delim+wordpos_tuple[1]
+    #-B-----------------------------------------------------------------------B-
+
+   
+
+#~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
+# ] Ending keyphrase_reranker class
+#~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
+

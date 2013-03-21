@@ -135,8 +135,8 @@ November 20, 1948. (Wikipedia, <a class="reference external" href="http://en.wik
 </tr>
 </tbody>
 </table>
-<div class="section" id="word-graph-class">
-<h2>word_graph class<a class="headerlink" href="#word-graph-class" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="word-graph">
+<h2>word_graph<a class="headerlink" href="#word-graph" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="takahe.word_graph">
 <em class="property">class </em><tt class="descclassname">takahe.</tt><tt class="descname">word_graph</tt><big>(</big><em>sentence_list</em>, <em>nb_words=8</em>, <em>lang='en'</em>, <em>punct_tag='PUNCT'</em><big>)</big><a class="headerlink" href="#takahe.word_graph" title="Permalink to this definition">¶</a></dt>
@@ -144,12 +144,16 @@ November 20, 1948. (Wikipedia, <a class="reference external" href="http://en.wik
 as input. The set of sentences is a list of strings, sentences are tokenized
 and words are POS-tagged (e.g. <tt class="docutils literal"><span class="pre">&quot;Saturn/NNP</span> <span class="pre">is/VBZ</span> <span class="pre">the/DT</span> <span class="pre">sixth/JJ</span> 
 <span class="pre">planet/NN</span> <span class="pre">from/IN</span> <span class="pre">the/DT</span> <span class="pre">Sun/NNP</span> <span class="pre">in/IN</span> <span class="pre">the/DT</span> <span class="pre">Solar/NNP</span> <span class="pre">System/NNP&quot;</span></tt>). 
-Three optional parameters can be specified. The first parameter is the 
-minimal number of words for the best compression (default value is 8). The 
-second parameter is the language and is used for selecting the correct 
-stopwords list (default is &#8220;en&#8221; for english, stopword lists are localized in 
-/resources/ directory). The third parameter is the punctuation mark tag 
-used during graph construction (default is PUNCT).</p>
+Four optional parameters can be specified:</p>
+<ul class="simple">
+<li>nb_words is is the minimal number of words for the best compression 
+(default value is 8).</li>
+<li>lang is the language parameter and is used for selecting the correct 
+stopwords list (default is &#8220;en&#8221; for english, stopword lists are localized 
+in /resources/ directory).</li>
+<li>punct_tag is the punctuation mark tag used during graph construction 
+(default is PUNCT).</li>
+</ul>
 <dl class="method">
 <dt id="takahe.word_graph.ambiguous_nodes">
 <tt class="descname">ambiguous_nodes</tt><big>(</big><em>node</em><big>)</big><a class="headerlink" href="#takahe.word_graph.ambiguous_nodes" title="Permalink to this definition">¶</a></dt>
@@ -361,6 +365,82 @@ verb must occur in the candidate compressions.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="keyphrase-reranker">
+<h2>keyphrase_reranker<a class="headerlink" href="#keyphrase-reranker" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="takahe.keyphrase_reranker">
+<em class="property">class </em><tt class="descclassname">takahe.</tt><tt class="descname">keyphrase_reranker</tt><big>(</big><em>sentence_list</em>, <em>compressions</em>, <em>lang='en'</em><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker" title="Permalink to this definition">¶</a></dt>
+<dd><p>The keyphrase_reranker class reranks a list of compression candidates 
+according to the keyphrases they contain.</p>
+<dl class="method">
+<dt id="takahe.keyphrase_reranker.build_graph">
+<tt class="descname">build_graph</tt><big>(</big><em>window=0</em><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker.build_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a word graph from the list if sentences given as input. Each node
+in the graph represents a (word, POS) tuple. An edge is created between
+two nodes if they co-occur in a given window (default is 0, indicating
+the whole sentence).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.keyphrase_reranker.compressions">
+<tt class="descname">compressions</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.compressions" title="Permalink to this definition">¶</a></dt>
+<dd><p>The compression candidates provided by the user.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.keyphrase_reranker.generate_candidates">
+<tt class="descname">generate_candidates</tt><big>(</big><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker.generate_candidates" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function generates the keyphrase candidates. Candidates are n-grams
+that only contain words from the defined syntactic categories.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.keyphrase_reranker.graph">
+<tt class="descname">graph</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>The graph used for keyphrase extraction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.keyphrase_reranker.keyphrase_candidates">
+<tt class="descname">keyphrase_candidates</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.keyphrase_candidates" title="Permalink to this definition">¶</a></dt>
+<dd><p>The keyphrase candidates generated from the set of sentences.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.keyphrase_reranker.lang">
+<tt class="descname">lang</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.lang" title="Permalink to this definition">¶</a></dt>
+<dd><p>The language of the input sentences, default is English (en).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.keyphrase_reranker.sentences">
+<tt class="descname">sentences</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.sentences" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of sentences provided by the user.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.keyphrase_reranker.syntactic_filter">
+<tt class="descname">syntactic_filter</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.syntactic_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>The POS tags used for generating keyphrase candidates.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.keyphrase_reranker.tuple_to_wordpos">
+<tt class="descname">tuple_to_wordpos</tt><big>(</big><em>wordpos_tuple</em>, <em>delim='/'</em><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker.tuple_to_wordpos" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function converts a (word, POS) tuple to word/POS. The character 
+used for separating word and POS can be specified (default is /).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.keyphrase_reranker.wordpos_to_tuple">
+<tt class="descname">wordpos_to_tuple</tt><big>(</big><em>word</em>, <em>delim='/'</em><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker.wordpos_to_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function converts a word/POS to a (word, POS) tuple. The character
+used for separating word and POS can be specified (default is /).</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
@@ -383,7 +463,8 @@ verb must occur in the candidate compressions.</p>
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">takahe documentation</a><ul>
-<li><a class="reference internal" href="#word-graph-class">word_graph class</a></li>
+<li><a class="reference internal" href="#word-graph">word_graph</a></li>
+<li><a class="reference internal" href="#keyphrase-reranker">keyphrase_reranker</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>

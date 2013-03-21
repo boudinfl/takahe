@@ -11,10 +11,16 @@ takahe documentation
 
 .. automodule:: takahe
 
-word_graph class
-------------------
+word_graph
+----------
  
 .. autoclass:: word_graph
+    :members:
+
+keyphrase_reranker
+------------------
+
+.. autoclass:: keyphrase_reranker
     :members:
 
 Indices and tables
