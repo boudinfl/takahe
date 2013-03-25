@@ -19,12 +19,15 @@ visited/VBD Chinese/JJ officials/NNS ./PUNCT"]
 # - minimal number of words in the compression : 6
 # - language of the input sentences : en (english)
 # - POS tag for punctuation marks : PUNCT
-compresser = takahe.word_graph(sentences, 6, 'en', "PUNCT")
+compresser = takahe.word_graph( sentences, 
+							    nb_words = 6, 
+	                            lang = 'en', 
+	                            punct_tag = "PUNCT" )
 
 # Get the 50 best paths
-candidates = compresser.get_compression(5)
+candidates = compresser.get_compression(50)
 
-# Rerank compressions by path length
+# 1. Rerank compressions by path length (Filippova's method)
 for cummulative_score, path in candidates:
 
 	# Normalize path score by path length
@@ -35,3 +38,16 @@ for cummulative_score, path in candidates:
 
 # Write the word graph in the dot format
 compresser.write_dot('test.dot')
+
+# 2. Rerank compressions by keyphrases (Boudin and Morin's method)
+reranker = takahe.keyphrase_reranker( sentences,  
+									  candidates, 
+									  lang = 'en' )
+
+reranked_candidates = reranker.rerank_nbest_compressions()
+
+# Loop over the best reranked candidates
+for score, path in reranked_candidates:
+	
+	# Print the best reranked candidates
+	print round(score, 3), ' '.join([u[0] for u in path])

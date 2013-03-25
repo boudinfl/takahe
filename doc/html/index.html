@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>takahe documentation &mdash; takahe 0.33 documentation</title>
+    <title>takahe documentation &mdash; takahe 0.4 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.33',
+        VERSION:     '0.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="takahe 0.33 documentation" href="#" /> 
+    <link rel="top" title="takahe 0.4 documentation" href="#" /> 
   </head>
   <body>
     <div class="related">
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="#">takahe 0.33 documentation</a> &raquo;</li> 
+        <li><a href="#">takahe 0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -61,40 +61,69 @@
 <tr class="field-even field"><th class="field-name">Authors:</th><td class="field-body"><p class="first">Florian Boudin (<a class="reference external" href="mailto:florian&#46;boudin&#37;&#52;&#48;univ-nantes&#46;fr">florian<span>&#46;</span>boudin<span>&#64;</span>univ-nantes<span>&#46;</span>fr</a>)</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Version:</th><td class="field-body"><p class="first">0.33</p>
+<tr class="field-odd field"><th class="field-name">Version:</th><td class="field-body"><p class="first">0.4</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body"><p class="first">Feb. 2013</p>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body"><p class="first">Mar. 2013</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Description:</th><td class="field-body"><p class="first">takahe is a multi-sentence compression module. Given a set of redundant 
 sentences, a word-graph is constructed by iteratively adding sentences to 
 it. The best compression is obtained by finding the shortest path in the
-word graph. The original algorithm was published and described in:</p>
-<blockquote>
-<div><p>Katja Filippova, Multi-Sentence Compression: Finding Shortest Paths
-in Word Graphs, <em>Proceedings of the 23rd International Conference on 
-Computational Linguistics (Coling 2010)</em>, pages 322-330, 2010.</p>
-</div></blockquote>
+word graph. The original algorithm was published and described in
+<a class="reference internal" href="#filippova-2010-coling">[filippova:2010:COLING]</a>. A keyphrase-based reranking method, described in
+<a class="reference internal" href="#boudin-morin-2013-naacl">[boudin-morin:2013:NAACL]</a> can be applied to generate more informative 
+compressions.</p>
+<table class="docutils citation" frame="void" id="filippova-2010-coling" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[filippova:2010:COLING]</a></td><td><p class="first last">Katja Filippova, Multi-Sentence Compression: 
+Finding Shortest Paths in Word Graphs, <em>Proceedings of the 23rd 
+International Conference on Computational Linguistics (Coling 2010)</em>, 
+pages 322-330, 2010.</p>
+</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="boudin-morin-2013-naacl" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[boudin-morin:2013:NAACL]</a></td><td><p class="first last">Florian Boudin and Emmanuel Morin, Keyphrase 
+Extraction for N-best Reranking in Multi-Sentence Compression, 
+<em>Proceedings of the 2013 Conference of the North American Chapter of the
+Association for Computational Linguistics: Human Language Technologies 
+(NAACL-HLT 2013)</em>, 2013.</p>
+</td></tr>
+</tbody>
+</table>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">History:</th><td class="field-body"><ul class="first simple">
+<tr class="field-even field"><th class="field-name">History:</th><td class="field-body"><dl class="first docutils">
+<dt>Development history of the takahe module:</dt>
+<dd><ul class="first last simple">
+<li>0.4 (Mar. 2013) adding the keyphrase-based nbest reranking algorithm</li>
 <li>0.33 (Feb. 2013), bug fixes and better code documentation</li>
-<li>0.32 (Jun. 2012), Punctuation marks are now considered within the graph, 
-compressions are then punctuated</li>
+<li>0.32 (Jun. 2012), Punctuation marks are now considered within the 
+graph, compressions are then punctuated</li>
 <li>0.31 (Nov. 2011), modified context function (uses the left and right 
 contexts), improved docstring documentation, bug fixes</li>
-<li>0.3 (Oct. 2011), improved K-shortest paths algorithm including verb/size 
-constraints and ordered lists for performance</li>
+<li>0.3 (Oct. 2011), improved K-shortest paths algorithm including 
+verb/size constraints and ordered lists for performance</li>
 <li>0.2 (Dec. 2010), removed dependencies from nltk (i.e. POS-tagging, 
 tokenization and stopwords removal)</li>
 <li>0.1 (Nov. 2010), first version</li>
 </ul>
+</dd>
+</dl>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Dependencies:</th><td class="field-body"><ul class="first simple">
-<li><em>networkx</em> for the graph construction (v1.2+)</li>
+<tr class="field-odd field"><th class="field-name">Dependencies:</th><td class="field-body"><dl class="first docutils">
+<dt>The following Python modules are required:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference external" href="http://networkx.github.com/">networkx</a> for the graph construction
+(v1.2+)</li>
 </ul>
+</dd>
+</dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Usage:</th><td class="field-body"><p class="first">A typical usage of this module is:</p>
@@ -107,12 +136,15 @@ tokenization and stopwords removal)</li>
 <span class="c"># - minimal number of words in the compression : 6</span>
 <span class="c"># - language of the input sentences : en (english)</span>
 <span class="c"># - POS tag for punctuation marks : PUNCT</span>
-<span class="n">compresser</span> <span class="o">=</span> <span class="n">takahe</span><span class="o">.</span><span class="n">word_graph</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="s">&#39;en&#39;</span><span class="p">,</span> <span class="s">&quot;PUNCT&quot;</span><span class="p">)</span>
+<span class="n">compresser</span> <span class="o">=</span> <span class="n">takahe</span><span class="o">.</span><span class="n">word_graph</span><span class="p">(</span> <span class="n">sentences</span><span class="p">,</span> 
+                                <span class="n">nb_words</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> 
+                                <span class="n">lang</span> <span class="o">=</span> <span class="s">&#39;en&#39;</span><span class="p">,</span> 
+                                <span class="n">punct_tag</span> <span class="o">=</span> <span class="s">&quot;PUNCT&quot;</span> <span class="p">)</span>
 
 <span class="c"># Get the 50 best paths</span>
-<span class="n">candidates</span> <span class="o">=</span> <span class="n">compresser</span><span class="o">.</span><span class="n">get_compression</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">candidates</span> <span class="o">=</span> <span class="n">compresser</span><span class="o">.</span><span class="n">get_compression</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
 
-<span class="c"># Rerank compressions by path length</span>
+<span class="c"># 1. Rerank compressions by path length (Filippova&#39;s method)</span>
 <span class="k">for</span> <span class="n">cummulative_score</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
 
     <span class="c"># Normalize path score by path length</span>
@@ -123,6 +155,19 @@ tokenization and stopwords removal)</li>
 
 <span class="c"># Write the word graph in the dot format</span>
 <span class="n">compresser</span><span class="o">.</span><span class="n">write_dot</span><span class="p">(</span><span class="s">&#39;test.dot&#39;</span><span class="p">)</span>
+
+<span class="c"># 2. Rerank compressions by keyphrases (Boudin and Morin&#39;s method)</span>
+<span class="n">reranker</span> <span class="o">=</span> <span class="n">takahe</span><span class="o">.</span><span class="n">keyphrase_reranker</span><span class="p">(</span> <span class="n">sentences</span><span class="p">,</span>  
+                                      <span class="n">candidates</span><span class="p">,</span> 
+                                      <span class="n">lang</span> <span class="o">=</span> <span class="s">&#39;en&#39;</span> <span class="p">)</span>
+
+<span class="n">reranked_candidates</span> <span class="o">=</span> <span class="n">reranker</span><span class="o">.</span><span class="n">rerank_nbest_compressions</span><span class="p">()</span>
+
+<span class="c"># Loop over the best reranked candidates</span>
+<span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">reranked_candidates</span><span class="p">:</span>
+    
+    <span class="c"># Print the best reranked candidates</span>
+    <span class="k">print</span> <span class="nb">round</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">path</span><span class="p">])</span>
 </pre></div>
 </div>
 </td>
@@ -369,29 +414,60 @@ verb must occur in the candidate compressions.</p>
 <h2>keyphrase_reranker<a class="headerlink" href="#keyphrase-reranker" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="takahe.keyphrase_reranker">
-<em class="property">class </em><tt class="descclassname">takahe.</tt><tt class="descname">keyphrase_reranker</tt><big>(</big><em>sentence_list</em>, <em>compressions</em>, <em>lang='en'</em><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker" title="Permalink to this definition">¶</a></dt>
-<dd><p>The keyphrase_reranker class reranks a list of compression candidates 
-according to the keyphrases they contain.</p>
+<em class="property">class </em><tt class="descclassname">takahe.</tt><tt class="descname">keyphrase_reranker</tt><big>(</big><em>sentence_list</em>, <em>nbest_compressions</em>, <em>lang='en'</em>, <em>patterns=</em><span class="optional">[</span><span class="optional">]</span>, <em>stopwords=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <em>keyphrase_reranker</em> reranks a list of compression candidates according 
+to the keyphrases they contain. Keyphrases are extracted from the set of 
+related sentences using a modified version of the TextRank method 
+<a class="reference internal" href="#mihalcea-tarau-2004-emnlp">[mihalcea-tarau:2004:EMNLP]</a>. First, an undirected weighted graph is 
+constructed from the set of sentences in which <em>nodes</em> are (lowercased word, 
+POS) tuples and <em>edges</em> represent co-occurrences. The TextRank algorithm is
+then applied on the graph to assign a score to each word. Second, keyphrase
+candidates are extracted from the set of sentences using POS syntactic 
+filtering. Keyphrases are then ranked according to the words they contain.
+This class requires a set of related sentences (as a list of POS annotated 
+sentences) and the N-best compression candidates (as a list of (score, list 
+of (word, POS) tuples) tuples). The following optional parameters can be 
+specified:</p>
+<ul class="simple">
+<li>lang is the language parameter and is used for selecting the correct 
+POS tags used for filtering keyphrase candidates.</li>
+<li>patterns is a list of extra POS patterns (regexes) used for filtering 
+keyphrase candidates, default is <tt class="docutils literal"><span class="pre">^(JJ)*(NNP|NNS|NN)+$</span></tt> for English and 
+<tt class="docutils literal"><span class="pre">^(ADJ)*(NC|NPP)+(ADJ)*$</span></tt> for French.</li>
+</ul>
+<table class="docutils citation" frame="void" id="mihalcea-tarau-2004-emnlp" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[mihalcea-tarau:2004:EMNLP]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id4">2</a>)</em> Rada Mihalcea and Paul Tarau, TextRank: 
+Bringing Order into Texts, Empirical Methods in Natural Language 
+Processing (EMNLP), 2004.</td></tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="takahe.keyphrase_reranker.build_graph">
 <tt class="descname">build_graph</tt><big>(</big><em>window=0</em><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker.build_graph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build a word graph from the list if sentences given as input. Each node
-in the graph represents a (word, POS) tuple. An edge is created between
-two nodes if they co-occur in a given window (default is 0, indicating
-the whole sentence).</p>
+<dd><p>Build a word graph from the list of sentences. Each node in the graph 
+represents a word. An edge is created between two nodes if they co-occur
+in a given window (default is 0, indicating the whole sentence).</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="takahe.keyphrase_reranker.compressions">
-<tt class="descname">compressions</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.compressions" title="Permalink to this definition">¶</a></dt>
-<dd><p>The compression candidates provided by the user.</p>
+<dl class="method">
+<dt id="takahe.keyphrase_reranker.cluster_keyphrase_candidates">
+<tt class="descname">cluster_keyphrase_candidates</tt><big>(</big><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker.cluster_keyphrase_candidates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to cluster keyphrase candidates and remove redundancy. A large 
+number of the generated keyphrase candidates are redundant. Some 
+keyphrases may be contained within larger ones, e.g. <em>giant tortoise</em>
+and <em>Pinta Island giant tortoise</em>. To solve this problem, generated 
+keyphrases are clustered using word overlap. For each cluster, the 
+keyphrase with the highest score is selected.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="takahe.keyphrase_reranker.generate_candidates">
 <tt class="descname">generate_candidates</tt><big>(</big><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker.generate_candidates" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function generates the keyphrase candidates. Candidates are n-grams
-that only contain words from the defined syntactic categories.</p>
+<dd><p>Function to generate the keyphrase candidates from the set of related 
+sentences. Keyphrases candidates are the largest n-grams containing only
+words from the defined syntactic categories.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -400,10 +476,23 @@ that only contain words from the defined syntactic categories.</p>
 <dd><p>The graph used for keyphrase extraction.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="takahe.keyphrase_reranker.is_a_candidate">
+<tt class="descname">is_a_candidate</tt><big>(</big><em>keyphrase_candidate</em><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker.is_a_candidate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to check if a keyphrase candidate is a valid one according to 
+the syntactic patterns.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="takahe.keyphrase_reranker.keyphrase_candidates">
 <tt class="descname">keyphrase_candidates</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.keyphrase_candidates" title="Permalink to this definition">¶</a></dt>
-<dd><p>The keyphrase candidates generated from the set of sentences.</p>
+<dd><p>Keyphrase candidates generated from the set of sentences.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.keyphrase_reranker.keyphrase_scores">
+<tt class="descname">keyphrase_scores</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.keyphrase_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scores for each keyphrase candidate.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -413,9 +502,37 @@ that only contain words from the defined syntactic categories.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="takahe.keyphrase_reranker.nbest_compressions">
+<tt class="descname">nbest_compressions</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.nbest_compressions" title="Permalink to this definition">¶</a></dt>
+<dd><p>The nbest compression candidates provided by the user.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.keyphrase_reranker.rerank_nbest_compressions">
+<tt class="descname">rerank_nbest_compressions</tt><big>(</big><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker.rerank_nbest_compressions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that reranks the nbest compressions according to the keyphrases
+they contain. The cummulative score (original score) is normalized by 
+(compression length * Sum of keyphrase scores).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.keyphrase_reranker.score_keyphrase_candidates">
+<tt class="descname">score_keyphrase_candidates</tt><big>(</big><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker.score_keyphrase_candidates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to compute the score of each keyphrase candidate according to 
+the words it contains. The score of each keyphrase is calculated as the 
+sum of its word scores normalized by its length + 1.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="takahe.keyphrase_reranker.sentences">
 <tt class="descname">sentences</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.sentences" title="Permalink to this definition">¶</a></dt>
-<dd><p>A list of sentences provided by the user.</p>
+<dd><p>The list of related sentences provided by the user.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.keyphrase_reranker.stopwords">
+<tt class="descname">stopwords</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.stopwords" title="Permalink to this definition">¶</a></dt>
+<dd><p>The set of words to be excluded from keyphrase extraction.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -424,11 +541,32 @@ that only contain words from the defined syntactic categories.</p>
 <dd><p>The POS tags used for generating keyphrase candidates.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="takahe.keyphrase_reranker.syntactic_patterns">
+<tt class="descname">syntactic_patterns</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.syntactic_patterns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Syntactic patterns for filtering keyphrase candidates.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="takahe.keyphrase_reranker.tuple_to_wordpos">
 <tt class="descname">tuple_to_wordpos</tt><big>(</big><em>wordpos_tuple</em>, <em>delim='/'</em><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker.tuple_to_wordpos" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function converts a (word, POS) tuple to word/POS. The character 
 used for separating word and POS can be specified (default is /).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="takahe.keyphrase_reranker.undirected_TextRank">
+<tt class="descname">undirected_TextRank</tt><big>(</big><em>d=0.84999999999999998</em>, <em>f_conv=0.0001</em><big>)</big><a class="headerlink" href="#takahe.keyphrase_reranker.undirected_TextRank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implementation of the TextRank algorithm as described in 
+<a class="reference internal" href="#mihalcea-tarau-2004-emnlp">[mihalcea-tarau:2004:EMNLP]</a>. Node scores are computed iteratively until
+convergence (a threshold is used, default is 0.0001). The dampling 
+factor is by default set to 0.85 as recommended in the article.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="takahe.keyphrase_reranker.word_scores">
+<tt class="descname">word_scores</tt><em class="property"> = None</em><a class="headerlink" href="#takahe.keyphrase_reranker.word_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scores for each word computed with TextRank.</p>
 </dd></dl>
 
 <dl class="method">
@@ -501,7 +639,7 @@ used for separating word and POS can be specified (default is /).</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="#">takahe 0.33 documentation</a> &raquo;</li> 
+        <li><a href="#">takahe 0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

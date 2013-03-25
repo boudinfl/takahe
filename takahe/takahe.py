@@ -9,35 +9,49 @@
     Florian Boudin (florian.boudin@univ-nantes.fr)
 
 :Version:
-    0.33
+    0.4
 
 :Date:
-    Feb. 2013
+    Mar. 2013
 
 :Description:
     takahe is a multi-sentence compression module. Given a set of redundant 
     sentences, a word-graph is constructed by iteratively adding sentences to 
     it. The best compression is obtained by finding the shortest path in the
-    word graph. The original algorithm was published and described in:
+    word graph. The original algorithm was published and described in
+    [filippova:2010:COLING]_. A keyphrase-based reranking method, described in
+    [boudin-morin:2013:NAACL]_ can be applied to generate more informative 
+    compressions.
 
-        Katja Filippova, Multi-Sentence Compression: Finding Shortest Paths
-        in Word Graphs, *Proceedings of the 23rd International Conference on 
-        Computational Linguistics (Coling 2010)*, pages 322-330, 2010.
+    .. [filippova:2010:COLING] Katja Filippova, Multi-Sentence Compression: 
+       Finding Shortest Paths in Word Graphs, *Proceedings of the 23rd 
+       International Conference on Computational Linguistics (Coling 2010)*, 
+       pages 322-330, 2010.
+    .. [boudin-morin:2013:NAACL] Florian Boudin and Emmanuel Morin, Keyphrase 
+       Extraction for N-best Reranking in Multi-Sentence Compression, 
+       *Proceedings of the 2013 Conference of the North American Chapter of the
+       Association for Computational Linguistics: Human Language Technologies 
+       (NAACL-HLT 2013)*, 2013.
+
 
 :History:
-    - 0.33 (Feb. 2013), bug fixes and better code documentation
-    - 0.32 (Jun. 2012), Punctuation marks are now considered within the graph, 
-      compressions are then punctuated
-    - 0.31 (Nov. 2011), modified context function (uses the left and right 
-      contexts), improved docstring documentation, bug fixes
-    - 0.3 (Oct. 2011), improved K-shortest paths algorithm including verb/size 
-      constraints and ordered lists for performance
-    - 0.2 (Dec. 2010), removed dependencies from nltk (i.e. POS-tagging, 
-      tokenization and stopwords removal)
-    - 0.1 (Nov. 2010), first version
+    Development history of the takahe module:
+        - 0.4 (Mar. 2013) adding the keyphrase-based nbest reranking algorithm
+        - 0.33 (Feb. 2013), bug fixes and better code documentation
+        - 0.32 (Jun. 2012), Punctuation marks are now considered within the 
+          graph, compressions are then punctuated
+        - 0.31 (Nov. 2011), modified context function (uses the left and right 
+          contexts), improved docstring documentation, bug fixes
+        - 0.3 (Oct. 2011), improved K-shortest paths algorithm including 
+          verb/size constraints and ordered lists for performance
+        - 0.2 (Dec. 2010), removed dependencies from nltk (i.e. POS-tagging, 
+          tokenization and stopwords removal)
+        - 0.1 (Nov. 2010), first version
 
 :Dependencies:
-    - *networkx* for the graph construction (v1.2+)
+    The following Python modules are required:
+        - `networkx <http://networkx.github.com/>`_ for the graph construction
+          (v1.2+)
 
 :Usage:
     A typical usage of this module is::
@@ -51,12 +65,15 @@
         # - minimal number of words in the compression : 6
         # - language of the input sentences : en (english)
         # - POS tag for punctuation marks : PUNCT
-        compresser = takahe.word_graph(sentences, 6, 'en', "PUNCT")
+        compresser = takahe.word_graph( sentences, 
+                                        nb_words = 6, 
+                                        lang = 'en', 
+                                        punct_tag = "PUNCT" )
 
         # Get the 50 best paths
-        candidates = compresser.get_compression(5)
+        candidates = compresser.get_compression(50)
 
-        # Rerank compressions by path length
+        # 1. Rerank compressions by path length (Filippova's method)
         for cummulative_score, path in candidates:
 
             # Normalize path score by path length
@@ -67,6 +84,19 @@
 
         # Write the word graph in the dot format
         compresser.write_dot('test.dot')
+
+        # 2. Rerank compressions by keyphrases (Boudin and Morin's method)
+        reranker = takahe.keyphrase_reranker( sentences,  
+                                              candidates, 
+                                              lang = 'en' )
+
+        reranked_candidates = reranker.rerank_nbest_compressions()
+
+        # Loop over the best reranked candidates
+        for score, path in reranked_candidates:
+            
+            # Print the best reranked candidates
+            print round(score, 3), ' '.join([u[0] for u in path])
 
 :Misc:
     The Takahe is a flightless bird indigenous to New Zealand. It was thought to
@@ -956,38 +986,79 @@ class word_graph:
 # ] Ending word_graph class
 #~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
 
+
+
 #~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
 # [ Class keyphrase_reranker
 #~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
 class keyphrase_reranker:
     """
-    The keyphrase_reranker class reranks a list of compression candidates 
-    according to the keyphrases they contain.
+    The *keyphrase_reranker* reranks a list of compression candidates according 
+    to the keyphrases they contain. Keyphrases are extracted from the set of 
+    related sentences using a modified version of the TextRank method 
+    [mihalcea-tarau:2004:EMNLP]_. First, an undirected weighted graph is 
+    constructed from the set of sentences in which *nodes* are (lowercased word, 
+    POS) tuples and *edges* represent co-occurrences. The TextRank algorithm is
+    then applied on the graph to assign a score to each word. Second, keyphrase
+    candidates are extracted from the set of sentences using POS syntactic 
+    filtering. Keyphrases are then ranked according to the words they contain.
+    This class requires a set of related sentences (as a list of POS annotated 
+    sentences) and the N-best compression candidates (as a list of (score, list 
+    of (word, POS) tuples) tuples). The following optional parameters can be 
+    specified:
+
+    - lang is the language parameter and is used for selecting the correct 
+      POS tags used for filtering keyphrase candidates.
+    - patterns is a list of extra POS patterns (regexes) used for filtering 
+      keyphrase candidates, default is ``^(JJ)*(NNP|NNS|NN)+$`` for English and 
+      ``^(ADJ)*(NC|NPP)+(ADJ)*$`` for French.
+
+    .. [mihalcea-tarau:2004:EMNLP] Rada Mihalcea and Paul Tarau, TextRank: 
+       Bringing Order into Texts, Empirical Methods in Natural Language 
+       Processing (EMNLP), 2004.
     """
 
     #-T-----------------------------------------------------------------------T-
-    def __init__(self, sentence_list, compressions, lang="en"):
+    def __init__(self, sentence_list, nbest_compressions, lang="en", 
+                 patterns=[], stopwords=[]):
 
         self.sentences = list(sentence_list)
-        """ A list of sentences provided by the user. """
+        """ The list of related sentences provided by the user. """
 
-        self.compressions = compressions
-        """ The compression candidates provided by the user. """
+        self.nbest_compressions = nbest_compressions
+        """ The nbest compression candidates provided by the user. """
 
         self.graph = nx.Graph()
         """ The graph used for keyphrase extraction. """
 
         self.lang = lang
-        """ The language of the input sentences, default is English (en).""" 
+        """ The language of the input sentences, default is English (en)."""
+
+        self.stopwords = set(stopwords) 
+        """ The set of words to be excluded from keyphrase extraction. """
 
         self.syntactic_filter = ['JJ', 'NNP', 'NNS', 'NN']
         """ The POS tags used for generating keyphrase candidates. """
 
         self.keyphrase_candidates = {}
-        """ The keyphrase candidates generated from the set of sentences. """
+        """ Keyphrase candidates generated from the set of sentences. """
 
+        self.word_scores = {}
+        """ Scores for each word computed with TextRank. """
+
+        self.keyphrase_scores = {}
+        """ Scores for each keyphrase candidate. """
+
+        self.syntactic_patterns = ['^(JJ)*(NNP|NNS|NN)+$']
+        """ Syntactic patterns for filtering keyphrase candidates. """
+
+        # Specific rules for French
         if self.lang == "fr":
             self.syntactic_filter = ['NPP', 'NC', 'ADJ']
+            self.syntactic_patterns = ['^(ADJ)*(NC|NPP)+(ADJ)*$']
+
+        # Add extra patterns
+        self.syntactic_patterns.extend(patterns)
 
         # 1. Build the word graph from the sentences
         self.build_graph()
@@ -995,8 +1066,14 @@ class keyphrase_reranker:
         # 2. Generate the keyphrase candidates
         self.generate_candidates()
 
-        for keyphrase in self.keyphrase_candidates:
-            print keyphrase
+        # 3. Compute the TextRank scores for each word in the graph
+        self.undirected_TextRank()
+
+        # 4. Compute the score of each keyphrase candidate
+        self.score_keyphrase_candidates()
+
+        # 5. Cluster keyphrases to remove redundancy
+        self.cluster_keyphrase_candidates()
 
     #-B-----------------------------------------------------------------------B-
 
@@ -1004,10 +1081,9 @@ class keyphrase_reranker:
     #-T-----------------------------------------------------------------------T-
     def build_graph(self, window=0):
         """
-        Build a word graph from the list if sentences given as input. Each node
-        in the graph represents a (word, POS) tuple. An edge is created between
-        two nodes if they co-occur in a given window (default is 0, indicating
-        the whole sentence).
+        Build a word graph from the list of sentences. Each node in the graph 
+        represents a word. An edge is created between two nodes if they co-occur
+        in a given window (default is 0, indicating the whole sentence).
         """
 
         # For each sentence 
@@ -1020,11 +1096,18 @@ class keyphrase_reranker:
             sentence = self.sentences[i].split(' ')
 
             # 1. Looping over the words and creating the nodes. Sentences are
-            #    converted to a list of tuples
+            #    also converted to a list of tuples
             for j in range(len(sentence)):
 
                 # Convert word/POS to (word, POS) tuple
-                sentence[j] = self.wordpos_to_tuple(sentence[j])
+                word, pos = self.wordpos_to_tuple(sentence[j])
+
+                # Replace word/POS by (word, POS) tuple in the sentence
+                sentence[j] = (word.lower(), pos)
+
+                # Modify the POS tags of stopwords to exclude them
+                if sentence[j][0] in self.stopwords:
+                    sentence[j] = (sentence[j][0], "STOPWORD")     
 
                 # Add the word only if it belongs to one of the syntactic 
                 # categories
@@ -1066,11 +1149,13 @@ class keyphrase_reranker:
             self.sentences[i] = sentence
     #-B-----------------------------------------------------------------------B-
 
+
     #-T-----------------------------------------------------------------------T-
     def generate_candidates(self):
         """
-        This function generates the keyphrase candidates. Candidates are n-grams
-        that only contain words from the defined syntactic categories.
+        Function to generate the keyphrase candidates from the set of related 
+        sentences. Keyphrases candidates are the largest n-grams containing only
+        words from the defined syntactic categories.
         """
 
         # For each sentence 
@@ -1084,25 +1169,244 @@ class keyphrase_reranker:
             # For each (word, pos) tuple in the sentence
             for j in range(len(sentence)):
 
+                word, pos = sentence[j]
+
                 # If word is to be included in a candidate
-                if sentence[j][1] in self.syntactic_filter:
+                if pos in self.syntactic_filter:
 
                     # Adds word to candidate
-                    candidate.append(self.tuple_to_wordpos(sentence[j]))
+                    candidate.append(sentence[j])
 
                 # If a candidate keyphrase is in the buffer
-                elif len(candidate) > 0:
+                elif len(candidate) > 0 and self.is_a_candidate(candidate):
 
-                    keyphrase = ' '.join(candidate)
+                    # Add candidate
+                    keyphrase = ' '.join(u[0] for u in candidate)
                     self.keyphrase_candidates[keyphrase] = candidate
 
                     # Flush the buffer
                     candidate = []
                
             # Handle the last possible candidate
-            if len(candidate) > 0:
-                keyphrase = ' '.join(candidate)
+            if len(candidate) > 0 and self.is_a_candidate(candidate):
+
+                # Add candidate
+                keyphrase = ' '.join(u[0] for u in candidate)
                 self.keyphrase_candidates[keyphrase] = candidate
+    #-B-----------------------------------------------------------------------B-
+
+
+    #-T-----------------------------------------------------------------------T-
+    def is_a_candidate(self, keyphrase_candidate):
+        """
+        Function to check if a keyphrase candidate is a valid one according to 
+        the syntactic patterns.
+        """
+
+        candidate_pattern = ''.join(u[1] for u in keyphrase_candidate)
+
+        for pattern in self.syntactic_patterns:
+            if not re.search(pattern, candidate_pattern):
+                return False
+
+        return True
+    #-B-----------------------------------------------------------------------B-
+
+
+    #-T-----------------------------------------------------------------------T-
+    def undirected_TextRank(self, d=0.85, f_conv=0.0001):
+        """
+        Implementation of the TextRank algorithm as described in 
+        [mihalcea-tarau:2004:EMNLP]_. Node scores are computed iteratively until
+        convergence (a threshold is used, default is 0.0001). The dampling 
+        factor is by default set to 0.85 as recommended in the article.
+        """
+
+        # Initialise the maximum node difference for checking stability
+        max_node_difference = f_conv
+    
+        # Initialise node scores to 1
+        self.word_scores = {}
+        for node in self.graph.nodes():
+            self.word_scores[node] = 1.0
+
+        # While the node scores are not stabilized
+        while (max_node_difference >= f_conv):
+
+            # Create a copy of the current node scores
+            current_node_scores = self.word_scores.copy()
+
+            # For each node I in the graph
+            for node_i in self.graph.nodes():
+
+                sum_Vj = 0
+
+                # For each node J connected to I
+                for node_j in self.graph.neighbors_iter(node_i):
+
+                    wji = self.graph[node_j][node_i]['weight']
+                    WSVj = current_node_scores[node_j]
+                    sum_wjk = 0.0
+
+                    # For each node K connected to J
+                    for node_k in self.graph.neighbors_iter(node_j):
+                        sum_wjk += self.graph[node_j][node_k]['weight']
+
+                    sum_Vj += ( (wji * WSVj) / sum_wjk )
+
+                # Modify node score
+                self.word_scores[node_i] = (1 - d) + (d * sum_Vj)
+
+                # Compute the difference between old and new score
+                score_difference = math.fabs(self.word_scores[node_i] \
+                                   - current_node_scores[node_i])
+
+                max_node_difference = max(score_difference, score_difference)
+    #-B-----------------------------------------------------------------------B-
+
+
+    #-T-----------------------------------------------------------------------T-
+    def score_keyphrase_candidates(self):
+        """
+        Function to compute the score of each keyphrase candidate according to 
+        the words it contains. The score of each keyphrase is calculated as the 
+        sum of its word scores normalized by its length + 1.
+        """
+
+        # Compute the score of each candidate according to its words
+        for keyphrase in self.keyphrase_candidates:
+
+            # Compute the sum of word scores for each candidate
+            keyphrase_score = 0.0
+            for word_pos_tuple in self.keyphrase_candidates[keyphrase]:
+                keyphrase_score += self.word_scores[word_pos_tuple]
+
+            # Normalise score by length
+            keyphrase_score /= (len(self.keyphrase_candidates[keyphrase]) + 1.0)
+
+            # Add score to the keyphrase candidates
+            self.keyphrase_scores[keyphrase] = keyphrase_score
+    #-B-----------------------------------------------------------------------B-
+
+
+    #-T-----------------------------------------------------------------------T-
+    def cluster_keyphrase_candidates(self):
+        """
+        Function to cluster keyphrase candidates and remove redundancy. A large 
+        number of the generated keyphrase candidates are redundant. Some 
+        keyphrases may be contained within larger ones, e.g. *giant tortoise*
+        and *Pinta Island giant tortoise*. To solve this problem, generated 
+        keyphrases are clustered using word overlap. For each cluster, the 
+        keyphrase with the highest score is selected.
+        """
+
+        # Sort keyphrase candidates by length
+        descending = sorted(self.keyphrase_candidates, 
+                            key = lambda x: len(self.keyphrase_candidates[x]), 
+                            reverse=True)
+
+        # Initialize the cluster container
+        clusters = {}
+
+        # Loop over keyphrases by decreasing length
+        for keyphrase in descending:
+
+            found_cluster = False
+            
+            # Create a set of words from the keyphrase
+            keyphrase_words = set(keyphrase.split(' '))
+
+            # Loop over existing clusters
+            for cluster in clusters:
+
+                # Create a set of words from the cluster representative
+                cluster_words = set(cluster.split(' '))
+
+                # Check if keyphrase words are all contained in the cluster
+                # representative words
+                if len(keyphrase_words.difference(cluster_words)) == 0 :
+                    
+                    # Add keyphrase to cluster
+                    clusters[cluster].append(keyphrase)
+
+                    # Mark cluster as found
+                    found_cluster = True
+
+            # If keyphrase does not fit into any existing cluster
+            if not found_cluster:
+                clusters[keyphrase] = [keyphrase]
+
+        # Initialize the best candidate cluster container
+        best_candidate_keyphrases = []
+
+        # Loop over the clusters to find the best keyphrases
+        for cluster in clusters:
+
+            # Find the best scored keyphrase candidate in the cluster
+            sorted_cluster = sorted(clusters[cluster], 
+                            key=lambda cluster: self.keyphrase_scores[cluster], 
+                            reverse=True)
+
+            best_candidate_keyphrases.append(sorted_cluster[0])
+
+        # Initialize the non redundant clustered keyphrases
+        non_redundant_keyphrases = []
+
+        # Sort best candidate by score
+        sorted_keyphrases = sorted(best_candidate_keyphrases, 
+                        key=lambda keyphrase: self.keyphrase_scores[keyphrase], 
+                        reverse=True)
+
+        # Last loop to remove redundancy in cluster best candidates
+        for keyphrase in sorted_keyphrases:
+            is_redundant = False
+            for prev_keyphrase in non_redundant_keyphrases:
+                if keyphrase in prev_keyphrase:
+                    is_redundant = True
+                    break
+            if not is_redundant:
+                non_redundant_keyphrases.append(keyphrase)
+
+        # Modify the keyphrase candidate dictionnaries according to the clusters
+        for keyphrase in self.keyphrase_candidates.keys():
+
+            # Remove candidate if not in cluster
+            if not keyphrase in non_redundant_keyphrases:
+                del self.keyphrase_candidates[keyphrase]
+                del self.keyphrase_scores[keyphrase]
+    #-B-----------------------------------------------------------------------B-
+
+
+    #-T-----------------------------------------------------------------------T-
+    def rerank_nbest_compressions(self):
+        """
+        Function that reranks the nbest compressions according to the keyphrases
+        they contain. The cummulative score (original score) is normalized by 
+        (compression length * Sum of keyphrase scores).
+        """
+
+        reranked_compressions = []
+
+        # Loop over the compression candidates
+        for cummulative_score, path in self.nbest_compressions:
+
+            # Generate the sentence form the path
+            compression = ' '.join([u[0] for u in path])
+
+            # Initialize total keyphrase score
+            total_keyphrase_score = 1.0
+
+            # Loop over the keyphrases and sum the scores
+            for keyphrase in self.keyphrase_candidates:
+                if keyphrase in compression:
+                    total_keyphrase_score += self.keyphrase_scores[keyphrase]
+
+            score = ( cummulative_score / (len(path) * total_keyphrase_score) )
+
+            bisect.insort( reranked_compressions, 
+                           (score, path) )
+
+        return reranked_compressions
     #-B-----------------------------------------------------------------------B-
 
     #-T-----------------------------------------------------------------------T-
@@ -1134,7 +1438,6 @@ class keyphrase_reranker:
         return wordpos_tuple[0]+delim+wordpos_tuple[1]
     #-B-----------------------------------------------------------------------B-
 
-   
 
 #~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
 # ] Ending keyphrase_reranker class
