@@ -1037,7 +1037,7 @@ class keyphrase_reranker:
         self.stopwords = set(stopwords) 
         """ The set of words to be excluded from keyphrase extraction. """
 
-        self.syntactic_filter = ['JJ', 'NNP', 'NNS', 'NN']
+        self.syntactic_filter = ['JJ', 'NNP', 'NNS', 'NN', 'NNPS']
         """ The POS tags used for generating keyphrase candidates. """
 
         self.keyphrase_candidates = {}
