@@ -1186,6 +1186,11 @@ class keyphrase_reranker:
 
                     # Flush the buffer
                     candidate = []
+
+                else:
+                    
+                    # Flush the buffer
+                    candidate = []
                
             # Handle the last possible candidate
             if len(candidate) > 0 and self.is_a_candidate(candidate):
