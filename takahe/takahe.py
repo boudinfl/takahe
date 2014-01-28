@@ -135,7 +135,7 @@ class word_graph:
     """
 
     #-T-----------------------------------------------------------------------T-
-    def __init__(self, sentence_list, nb_words=8, lang="en", punct_tag="PUNCT"):
+    def __init__(self, sentence_list, nb_words=8, lang="en", punct_tag="PUNCT", pos_separator='/'):
 
         self.sentence = list(sentence_list)
         """ A list of sentences provided by the user. """
@@ -157,6 +157,9 @@ class word_graph:
 
         self.punct_tag = punct_tag
         """ The stopword tag used in the graph. """
+
+        self.pos_separator = pos_separator
+        """ The character (or string) used to separate a word and its Part of Speech tag """
 
         self.graph = nx.DiGraph()
         """ The directed graph used for fusion. """
@@ -218,7 +221,8 @@ class word_graph:
             for w in sentence:
                 
                 # Splitting word, POS
-                m = re.match("^(.+)/(.+)$", w)
+                pos_separator_re = re.escape(self.pos_separator)
+                m = re.match("^(.+)" +pos_separator_re +"(.+)$", w)
                 
                 # Extract the word information
                 token, POS = m.group(1), m.group(2)
