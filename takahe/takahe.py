@@ -206,6 +206,7 @@ class word_graph:
         
             # Normalise extra white spaces
             self.sentence[i] = re.sub(' +', ' ', self.sentence[i])
+            self.sentence[i] = self.sentence[i].strip()
             
             # Tokenize the current sentence in word/POS
             sentence = self.sentence[i].split(' ')
