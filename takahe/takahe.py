@@ -741,7 +741,7 @@ class word_graph:
         weight1 = freq1
         weight2 = freq2
 
-        return ( (freq1 + freq1) / sum(diff) ) / (weight1 * weight2)
+        return ( (freq1 + freq2) / sum(diff) ) / (weight1 * weight2)
     #-B-----------------------------------------------------------------------B-
    
    
