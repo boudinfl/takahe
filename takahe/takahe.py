@@ -135,7 +135,7 @@ class word_graph:
     """
 
     #-T-----------------------------------------------------------------------T-
-    def __init__(self, sentence_list, nb_words=8, lang="en", punct_tag="PUNCT"):
+    def __init__(self, sentence_list, nb_words=8, lang="en", punct_tag="PUNCT", pos_separator='/'):
 
         self.sentence = list(sentence_list)
         """ A list of sentences provided by the user. """
@@ -157,6 +157,9 @@ class word_graph:
 
         self.punct_tag = punct_tag
         """ The stopword tag used in the graph. """
+
+        self.pos_separator = pos_separator
+        """ The character (or string) used to separate a word and its Part of Speech tag """
 
         self.graph = nx.DiGraph()
         """ The directed graph used for fusion. """
@@ -206,6 +209,7 @@ class word_graph:
         
             # Normalise extra white spaces
             self.sentence[i] = re.sub(' +', ' ', self.sentence[i])
+            self.sentence[i] = self.sentence[i].strip()
             
             # Tokenize the current sentence in word/POS
             sentence = self.sentence[i].split(' ')
@@ -217,7 +221,8 @@ class word_graph:
             for w in sentence:
                 
                 # Splitting word, POS
-                m = re.match("^(.+)/(.+)$", w)
+                pos_separator_re = re.escape(self.pos_separator)
+                m = re.match("^(.+)" +pos_separator_re +"(.+)$", w)
                 
                 # Extract the word information
                 token, POS = m.group(1), m.group(2)
@@ -1020,7 +1025,7 @@ class keyphrase_reranker:
 
     #-T-----------------------------------------------------------------------T-
     def __init__(self, sentence_list, nbest_compressions, lang="en", 
-                 patterns=[], stopwords=[]):
+                 patterns=[], stopwords=[], pos_separator='/'):
 
         self.sentences = list(sentence_list)
         """ The list of related sentences provided by the user. """
@@ -1034,8 +1039,12 @@ class keyphrase_reranker:
         self.lang = lang
         """ The language of the input sentences, default is English (en)."""
 
-        self.stopwords = set(stopwords) 
+        self.stopwords = set(stopwords)
         """ The set of words to be excluded from keyphrase extraction. """
+
+        self.pos_separator = pos_separator
+        """ The character (or string) used to separate a word and its
+        Part Of Speech tag. """
 
         self.syntactic_filter = ['JJ', 'NNP', 'NNS', 'NN', 'NNPS']
         """ The POS tags used for generating keyphrase candidates. """
@@ -1415,14 +1424,15 @@ class keyphrase_reranker:
     #-B-----------------------------------------------------------------------B-
 
     #-T-----------------------------------------------------------------------T-
-    def wordpos_to_tuple(self, word, delim='/'):
+    def wordpos_to_tuple(self, word):
         """
         This function converts a word/POS to a (word, POS) tuple. The character
         used for separating word and POS can be specified (default is /).
         """
 
         # Splitting word, POS using regex
-        m = re.match("^(.+)"+delim+"(.+)$", word)
+        pos_separator_re = re.escape(self.pos_separator)
+        m = re.match("^(.+)"+ pos_separator_re +"(.+)$", word)
 
         # Extract the word information
         token, POS = m.group(1), m.group(2)
@@ -1433,14 +1443,14 @@ class keyphrase_reranker:
 
 
     #-T-----------------------------------------------------------------------T-
-    def tuple_to_wordpos(self, wordpos_tuple, delim='/'):
+    def tuple_to_wordpos(self, wordpos_tuple):
         """
         This function converts a (word, POS) tuple to word/POS. The character 
         used for separating word and POS can be specified (default is /).
         """
-
+        
         # Return the word +delim+ POS
-        return wordpos_tuple[0]+delim+wordpos_tuple[1]
+        return wordpos_tuple[0]+ self.pos_separator +wordpos_tuple[1]
     #-B-----------------------------------------------------------------------B-
 
 

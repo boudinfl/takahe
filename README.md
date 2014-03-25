@@ -8,6 +8,20 @@ A keyphrase-based reranking method can be applied to generate more informative c
 
 * Florian Boudin and Emmanuel Morin, Keyphrase Extraction for N-best Reranking in Multi-Sentence Compression, *Proceedings of the 2013 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT 2013)*, 2013.
 
+
+## Dependancies
+
+As of today, takahe is built for Python 2.
+
+You may need to install the following libraries :
+
+- [networkx](http://networkx.github.io/) (installation guide is available [here](http://networkx.github.io/documentation/latest/install.html))
+- [graphviz](http://www.graphviz.org/) and graphviz-dev
+- [pygraphviz](http://pygraphviz.github.io/documentation/latest/install.html)
+
+
+
+## Example
 A typical usage of this module is:
     
 	import takahe
