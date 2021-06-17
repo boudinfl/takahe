@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import takahe
+from takahe import takahe
 
 
 ################################################################################
@@ -10,7 +10,7 @@ Bill/NNP Clinton/NNP Hillary/NNP Clinton/NNP visited/VBD China/NNP last/JJ \
 Monday/NNP ./PUNCT", "Hillary/NNP Clinton/NNP wanted/VBD to/TO visit/VB China/NNP \
 last/JJ month/NN but/CC postponed/VBD her/PRP$ plans/NNS till/IN Monday/NNP \
 last/JJ week/NN ./PUNCT", "Hillary/NNP Clinton/NNP paid/VBD a/DT visit/NN to/TO \
-the/DT People/NNP Republic/NNP of/IN China/NNP on/IN Monday/NNP ./PUNCT", 
+the/DT People/NNP Republic/NNP of/IN China/NNP on/IN Monday/NNP ./PUNCT",
 "Last/JJ week/NN the/DT Secretary/NNP of/IN State/NNP Ms./NNP Clinton/NNP \
 visited/VBD Chinese/JJ officials/NNS ./PUNCT"]
 ################################################################################
@@ -19,9 +19,9 @@ visited/VBD Chinese/JJ officials/NNS ./PUNCT"]
 # - minimal number of words in the compression : 6
 # - language of the input sentences : en (english)
 # - POS tag for punctuation marks : PUNCT
-compresser = takahe.word_graph( sentences, 
-							    nb_words = 6, 
-	                            lang = 'en', 
+compresser = takahe.word_graph( sentences,
+							    nb_words = 6,
+	                            lang = 'en',
 	                            punct_tag = "PUNCT" )
 
 # Get the 50 best paths
@@ -34,20 +34,20 @@ for cummulative_score, path in candidates:
 	normalized_score = cummulative_score / len(path)
 
 	# Print normalized score and compression
-	print round(normalized_score, 3), ' '.join([u[0] for u in path])
+	print(round(normalized_score, 3), ' '.join([u[0] for u in path]))
 
 # Write the word graph in the dot format
 compresser.write_dot('test.dot')
 
 # 2. Rerank compressions by keyphrases (Boudin and Morin's method)
-reranker = takahe.keyphrase_reranker( sentences,  
-									  candidates, 
+reranker = takahe.keyphrase_reranker( sentences,
+									  candidates,
 									  lang = 'en' )
 
 reranked_candidates = reranker.rerank_nbest_compressions()
 
 # Loop over the best reranked candidates
 for score, path in reranked_candidates:
-	
+
 	# Print the best reranked candidates
-	print round(score, 3), ' '.join([u[0] for u in path])
+	print(round(score, 3), ' '.join([u[0] for u in path]))

@@ -11,28 +11,29 @@ A keyphrase-based reranking method can be applied to generate more informative c
 
 ## Dependancies
 
-As of today, takahe is built for Python 2.
+As of today, takahe is built for Python 3.7.
 
 You may need to install the following libraries :
 
-- [networkx](http://networkx.github.io/) (installation guide is available [here](http://networkx.github.io/documentation/latest/install.html))
+- [networkx=1.11](http://networkx.github.io/) (installation guide is available [here](http://networkx.github.io/documentation/latest/install.html))
 - [graphviz](http://www.graphviz.org/) and graphviz-dev
 - [pygraphviz](http://pygraphviz.github.io/documentation/latest/install.html)
+- [pydotplus](https://pypi.org/project/pydotplus/)
 
 
 
 ## Example
 A typical usage of this module is:
-    
+
 	import takahe
-        
+
 	# Create a word graph from the set of sentences with parameters :
 	# - minimal number of words in the compression : 6
 	# - language of the input sentences : en (english)
 	# - POS tag for punctuation marks : PUNCT
-	compresser = takahe.word_graph( sentences, 
-								    nb_words = 6, 
-		                            lang = 'en', 
+	compresser = takahe.word_graph( sentences,
+								    nb_words = 6,
+		                            lang = 'en',
 		                            punct_tag = "PUNCT" )
 
 	# Get the 50 best paths
@@ -52,13 +53,13 @@ A typical usage of this module is:
 
 	# 2. Rerank compressions by keyphrases (Boudin and Morin's method)
 	reranker = takahe.keyphrase_reranker( sentences,  
-										  candidates, 
+										  candidates,
 										  lang = 'en' )
 
 	reranked_candidates = reranker.rerank_nbest_compressions()
 
 	# Loop over the best reranked candidates
 	for score, path in reranked_candidates:
-		
+
 		# Print the best reranked candidates
 		print round(score, 3), ' '.join([u[0] for u in path])
